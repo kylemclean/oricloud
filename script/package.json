@@ -1,0 +1,19 @@
+{
+  "name": "pog-script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild pog.ts --bundle --outfile=out.js && cp out.js test/pog.js",
+    "start": "npm run build && http-server test --port 5000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.14.11"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.0"
+  }
+}
