@@ -4,11 +4,16 @@ import uvicorn
 
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+
+from sqlalchemy.orm import Session
+
+from typing import List
 
 import models
 from database import SessionLocal, engine
 import schemas
+import crud
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -21,6 +26,22 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.get("/jobs/{user_id}", response_model=List[schemas.Job])
+def read_jobs(user_id: str, db: Session = Depends(get_db)):
+    jobs = crud.get_jobs_from_user(db, uid=user_id)
+    return jobs
+
+
+@app.post("/jobs")
+def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
+    job = crud.create_job(db, pid=job.program_id, input=job.input)
+    if job is None:
+        result = schemas.ResultError(success=False, error="Job not created")
+    else:
+        result = schemas.ResultPass(success=True, id=job.id)
+    return result
 
 
 @app.get("/")
