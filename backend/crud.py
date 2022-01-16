@@ -23,7 +23,7 @@ def create_job(db: Session, pid, input):
     # TODO: Get user id that created the job
     user_id = 1
     job = models.Job(
-        id=uuid.uuid4,
+        id=str(uuid.uuid4()),
         program_id=pid,
         input=input_msg,
         creator_id=user_id,
@@ -40,7 +40,7 @@ def create_program(db: Session, prog_name, executable):
     # TODO: Get user id that created the job
     uid = 1
     program = models.Program(
-        id=uuid.uuid4,
+        id=str(uuid.uuid4()),
         name=prog_name,
         executable=exec_bytes,
         user_id=uid,
