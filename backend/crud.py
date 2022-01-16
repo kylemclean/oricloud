@@ -67,3 +67,30 @@ def get_prog(db: Session, id):
     db_prog = db.query(models.Program).filter(models.Program.id == id).first()
     prog = schemas.Program(id=db_prog.id, name=db_prog.name)
     return prog
+
+
+def create_run(db: Session, id):
+    job = (
+        db.query(models.Job)
+        .filter(
+            (models.Job.creator_id == id)
+            and (models.Job.state != "Completed")
+            and (models.Job.state != "Cancelled")
+        )
+        .first()
+    )
+    program = (
+        db.query(models.Program).filter(models.Program.id == job.program_id).first()
+    )
+    program_data = schemas.ProgramData(
+        name=program.name, id=program.id, executable=program.executable
+    )
+    job_data = schemas.JobData(id=job.id, input=job.input, program=program_data)
+    run = models.Run(
+        id=str(uuid.uuid4()), state="Pending", key=str(uuid.uuid4()), job_id=job.id
+    )
+    new_run = schemas.RunNew(id=run.id, key=run.key, job=job_data)
+    db.add(run)
+    db.commit()
+    db.refresh(run)
+    return new_run
