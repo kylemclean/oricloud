@@ -2,14 +2,136 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>pog test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="...">
+    <title>POGCORP - Biomedical Research</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            list-style: none;
+            text-decoration: none;
+            font-family: "Roberto", sans-serif;
+        }
+
+        body {
+            background-color: #f3f5f9;
+        }
+
+        .wrapper {
+            display: flex;
+            position: relative;
+        }
+
+        .wrapper .sidebar {
+            position: fixed;
+            width: 200px;
+            height: 100%;
+            background: #4b4276;
+            padding: 30px 0px;
+        }
+
+        .wrapper .sidebar h2 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .wrapper .sidebar ul li {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-top: 1px solid rbga(255, 255, 255, 0.05);
+        }
+
+        .wrapper .sidebar ul li a {
+            color: #bdb8d7;
+            display: block;
+        }
+
+        .main-content {
+            width: 100%;
+            margin-left: 200px;
+        }
+
+        .main-content .header {
+            padding: 20px;
+            background: #fff;
+            color: #717171;
+            border-bottom: 1px solid #e0e4e8;
+        }
+
+        .main-content .info {
+            margin: 20px;
+            color: #717171;
+            line-height: 25px;
+        }
+
+        img {
+            width: 1000px;
+            margin: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Pog Test</h1>
-    <p>This is a test for the Pog script</p>
+    <div class="wrapper">
+        <div class="sidebar">
+            <h2><b>Menu</b></h2>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About Pogcorp</a></li>
+                <li><a href="#">Articles</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </div>
 
+    <div class="main-content">
+        <div class="header">
+            <h1>POGCORP - Biomedical Research</h1>
+        </div>
+        <img src="images/med_image1.jpg" alt="An image of biomedical research">
+        <div class="info">
+            <h2>WHAT IS BIOMEDICAL RESEARCH?</h2>
+            <p>Etiam interdum lectus sit amet velit hendrerit, porta scelerisque purus congue. Integer viverra sem a est
+                sagittis mattis. Quisque ac nisi a urna auctor mollis nec ac metus. Etiam ut tortor vestibulum, tempor
+                felis
+                id,
+                auctor odio. Phasellus sodales euismod lacus sed mattis. Sed dui lorem, tincidunt at sapien sit amet,
+                sagittis
+                ultricies tortor. In rhoncus, sem id sodales convallis, nisl neque laoreet dui, at mattis ante nulla in
+                lorem.
+            </p>
+            <h3>Why is Pogcorp Researching?</h3>
+            <p> Quisque pretium mauris sit amet iaculis accumsan. Class aptent taciti sociosqu ad litora torquent per
+                conubia
+                nostra, per inceptos himenaeos. Etiam a dictum lectus. Integer euismod, mi non finibus malesuada, felis
+                libero
+                efficitur erat, ac ullamcorper nunc sapien in tortor. Donec sollicitudin, mi a dignissim imperdiet,
+                lectus
+                tellus elementum massa, vel congue libero purus eu urna. Vivamus rutrum semper libero nec feugiat.
+                Integer a
+                sapien pharetra, iaculis metus quis, semper eros. Etiam quis mi a velit accumsan mattis non quis leo.
+                Morbi
+                quis
+                lacus viverra, eleifend risus vel, commodo augue. Donec fermentum eget orci non lacinia. Vivamus enim
+                enim,
+                placerat eu ipsum ac, semper ultrices purus. Duis molestie massa ac est hendrerit sodales. Sed
+                condimentum
+                erat
+                a purus aliquam, ut tempus metus viverra.
+
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis pulvinar ligula at interdum.
+                Pellentesque vulputate ligula sapien, nec aliquam odio ornare sed. Vivamus diam metus, iaculis eu
+                vestibulum
+                eget, vehicula vitae neque. Nulla vel turpis nisi. Ut commodo ex a interdum fringilla. Praesent non
+                eleifend
+                risus. Praesent a porta ipsum. Nam rhoncus venenatis risus, a elementum tortor interdum vitae. </p>
+
+        </div>
+    </div>
     <script src="/pog.js"></script>
 </body>
 
