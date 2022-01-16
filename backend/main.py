@@ -49,8 +49,10 @@ def read_jobs(db: Session = Depends(get_db)):
 
 
 @app.post("/jobs")
-def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
-    job = crud.create_job(db, pid=job.program_id, input=job.input)
+def create_job(
+    program_id: str = Form(...), input: bytes = File(...), db: Session = Depends(get_db)
+):
+    job = crud.create_job(db, pid=program_id, input=input)
     if job is None:
         result = schemas.ResultError(error="Job not created")
     else:

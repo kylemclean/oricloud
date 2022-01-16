@@ -18,7 +18,7 @@ export default function ProgramPage(): JSX.Element {
         api.getProgram(programId)
             .then(setProgram)
             .catch(error => setProgramError(error.message));
-    }, []);
+    }, [programId]);
 
     return (
         <Container maxWidth="md">
