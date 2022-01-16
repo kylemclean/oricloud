@@ -13,10 +13,6 @@ class Program(ProgramBase):
         orm_mode = True
 
 
-class ProgramCreate(ProgramBase):
-    executable: str
-
-
 class ProgramData(Program):
     executable: str
 
@@ -70,9 +66,14 @@ class ResultBase(BaseModel):
     success: bool
 
 
-class ResultPass(BaseModel):
+class ResultPass(ResultBase):
+    success: bool = True
+
+
+class CreateResultPass(ResultPass):
     id: str
 
 
 class ResultError(BaseModel):
+    success: bool = False
     error: str
