@@ -78,6 +78,16 @@ def get_prog_by_id(prog_id: str, db: Session = Depends(get_db)):
     return job
 
 
+@app.post("/runs")
+def run_job(user: str, db: Session = Depends(get_db)):
+    new_run = crud.create_run(db, id=user)
+    if new_run is None:
+        result = schemas.ResultError(success=False, error="Job not run")
+        return result
+    else:
+        return new_run
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
