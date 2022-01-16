@@ -24,8 +24,8 @@ class Job(Base):
     creator = relationship("User")
 
 
-class JobResult(Base):
-    __tablename__ = "jobresult"
+class RunCompletion(Base):
+    __tablename__ = "runcompletion"
 
     run_id = Column(String, ForeignKey("run.id"), primary_key=True)
     output = Column(LargeBinary)
@@ -50,7 +50,7 @@ class Program(Base):
     id = Column(String, primary_key=True)
     name = Column(String)
     executable = Column(LargeBinary)
-    user = Column(String, ForeignKey("user.id"))
+    user_id = Column(String, ForeignKey("user.id"))
 
     user = relationship("User")
 
