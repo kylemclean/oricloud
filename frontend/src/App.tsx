@@ -1,26 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import NavigationBar from './components/NavigationBar';
+import EditProgram from './pages/EditProgram';
+import NewProgram from './pages/NewProgram';
+import Program from './pages/Program';
+import Programs from './pages/Programs';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App(): JSX.Element {
+    return (
+        <BrowserRouter>
+            <NavigationBar />
+
+            <Routes>
+                <Route path="programs">
+                    <Route path=":programId" element={<Program />} />
+                    <Route path=":programId/edit" element={<EditProgram />} />
+                    <Route path="new" element={<NewProgram />} />
+                    <Route index element={<Programs />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
-
-export default App;
