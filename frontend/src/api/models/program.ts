@@ -1,4 +1,4 @@
-import { Result } from "./result";
+import { CreateResult, Result } from "./result";
 
 interface ProgramBase {
     name: string
@@ -12,8 +12,10 @@ interface ProgramExecutable {
     executable: string
 }
 
-export type ProgramCreate = ProgramBase & ProgramExecutable;
+export type ProgramCreate = ProgramBase & {
+    executable: File
+};
 
 export type ProgramData = ProgramBase & ProgramExecutable;
 
-export type CreateProgramResult = Result;
+export type CreateProgramResult = CreateResult;

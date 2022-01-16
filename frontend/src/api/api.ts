@@ -26,9 +26,19 @@ class Api {
     getProgram = async (programId: string): Promise<Program> =>
         (await this.axiosInstance.get<Program>(`/programs/${programId}`)).data;
 
-    createProgram = async (program: ProgramCreate): Promise<CreateProgramResult> =>
-        (await this.axiosInstance.post<ProgramCreate, AxiosResponse<CreateProgramResult>>(
-            '/programs', program)).data;
+    createProgram = async (program: ProgramCreate): Promise<CreateProgramResult> => {
+        const formData = new FormData();
+        for (const [key, value] of Object.entries(program))
+            formData.append(key, value);
+
+        return (await this.axiosInstance.post<FormData, AxiosResponse<CreateProgramResult>>(
+            '/programs',
+            formData,
+            {
+                headers: { "Content-type": "multipart/form-data" }
+            }
+        )).data;
+    }
 
     getRuns = async (jobId: string): Promise<Run[]> =>
         (await this.axiosInstance.get<Run[]>(`/runs?job=${jobId}`)).data;

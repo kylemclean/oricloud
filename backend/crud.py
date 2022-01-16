@@ -48,7 +48,7 @@ def get_progs_from_user(db: Session, uid: str):
 
 
 def create_program(db: Session, prog_name, executable):
-    exec_bytes = bytes(executable, "utf-8")
+    exec_bytes = bytes(executable)
     # TODO: Get user id that created the job
     uid = 1
     program = models.Program(
