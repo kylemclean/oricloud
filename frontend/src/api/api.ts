@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { CreateJobResult, Job, JobCreate } from './models/job';
+import { LoginSuccessResult } from './models/login';
 import { CreateProgramResult, Program, ProgramCreate } from './models/program';
 import { Run, RunNew, RunCompletion, CompleteRunResult } from './models/run';
 
@@ -10,6 +11,15 @@ class Api {
     constructor(config: AxiosRequestConfig) {
         this.axiosInstance = axios.create(config);
         this.baseURL = config.baseURL;
+
+        this.axiosInstance.interceptors.request.use(requestConfig => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                requestConfig.headers = config.headers ?? {};
+                requestConfig.headers["Authorization"] = `Bearer ${token}`;
+            }
+            return requestConfig;
+        })
     }
 
     getJobs = async (): Promise<Job[]> =>
@@ -67,6 +77,22 @@ class Api {
 
     runOutputUrl = (runId: string): string =>
         `${this.baseURL ?? '/'}/runs/${runId}/output`
+
+    login = async (email: string, password: string): Promise<void> => {
+        try {
+            const result = (await this.axiosInstance.post<void, AxiosResponse<LoginSuccessResult>>(
+                '/token',
+                `grant_type=&username=${email}&password=${password}&scope=&client_id=&client_secret`,
+                {
+                    headers: {
+                        "accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                }
+            )).data;
+
+            localStorage.setItem("token", result.access_token);
+        } catch (err) { }
+    }
 }
 
 const api = new Api({
