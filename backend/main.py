@@ -78,6 +78,12 @@ def get_prog_by_id(prog_id: str, db: Session = Depends(get_db)):
     return job
 
 
+@app.get("/runs", response_model=List[schemas.Run])
+def read_runs(job: str, db: Session = Depends(get_db)):
+    runs = crud.get_runs_from_job(db, jid=job)
+    return runs
+
+
 @app.post("/runs")
 def run_job(user: str, db: Session = Depends(get_db)):
     new_run = crud.create_run(db, id=user)
@@ -86,6 +92,12 @@ def run_job(user: str, db: Session = Depends(get_db)):
         return result
     else:
         return new_run
+
+
+@app.get("/runs/{run_id}", response_model=schemas.Run)
+def get_run_by_id(run_id: str, db: Session = Depends(get_db)):
+    run = crud.get_run(db, id=run_id)
+    return run
 
 
 @app.get("/")

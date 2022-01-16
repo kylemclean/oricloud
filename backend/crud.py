@@ -69,6 +69,15 @@ def get_prog(db: Session, id):
     return prog
 
 
+def get_runs_from_job(db: Session, jid: str):
+    runs = []
+    db_runs = db.query(models.Run).filter(models.Run.job_id == jid).all()
+    for db_run in db_runs:
+        run = get_run(db, db_run.id)
+        runs.append(run)
+    return runs
+
+
 def create_run(db: Session, id):
     job = (
         db.query(models.Job)
@@ -94,3 +103,9 @@ def create_run(db: Session, id):
     db.commit()
     db.refresh(run)
     return new_run
+
+
+def get_run(db: Session, id):
+    db_run = db.query(models.Run).filter(models.Run.id == id).first()
+    run = schemas.Run(id=db_run.id, state=str(db_run.state))
+    return run
