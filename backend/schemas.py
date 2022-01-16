@@ -72,3 +72,9 @@ class CreateResultPass(ResultPass):
 class ResultError(BaseModel):
     success: bool = False
     error: str
+
+
+class User(BaseModel):
+    id: str
+    email: str
+    password: str

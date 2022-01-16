@@ -4,8 +4,9 @@ import uvicorn
 
 from typing import Optional
 
-from fastapi import FastAPI, Depends, File, Form, HTTPException, Response
+from fastapi import FastAPI, Depends, File, Form, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
@@ -19,6 +20,8 @@ import crud
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,19 +43,51 @@ def get_db():
         db.close()
 
 
-@app.get("/jobs", response_model=List[schemas.Job])
-def read_jobs(db: Session = Depends(get_db)):
-    # TODO: Set up authentication stuff to let API know which user ran the GET
-    user_id = "1"
-    jobs = crud.get_jobs_from_user(db, uid=user_id)
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
+    user = db.query(models.User).filter(models.User.id == token).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user.id
+
+
+@app.post("/token")
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+):
+    user_dict = (
+        db.query(models.User).filter(models.User.email == form_data.username).first()
+    )
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    if not form_data.password == user_dict.password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user_dict.id, "token_type": "bearer"}
+
+
+@app.get(
+    "/jobs",
+    response_model=List[schemas.Job],
+)
+def read_jobs(db: Session = Depends(get_db), user: str = Depends(get_current_user)):
+    jobs = crud.get_jobs_from_user(db, uid=user)
     return jobs
 
 
 @app.post("/jobs")
 def create_job(
-    program_id: str = Form(...), input: bytes = File(...), db: Session = Depends(get_db)
+    program_id: str = Form(...),
+    input: bytes = File(...),
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
 ):
-    job = crud.create_job(db, pid=program_id, input=input)
+    job = crud.create_job(db, pid=program_id, input=input, user_id=user)
     if job is None:
         result = schemas.ResultError(error="Job not created")
     else:
@@ -67,18 +102,16 @@ def get_job_by_id(job_id: str, db: Session = Depends(get_db)):
 
 
 @app.get("/programs", response_model=List[schemas.Program])
-def read_progs(db: Session = Depends(get_db)):
-    # TODO: Set up authentication stuff to let API know which user ran the GET
-    user_id = "1"
-    jobs = crud.get_progs_from_user(db, uid=user_id)
+def read_progs(db: Session = Depends(get_db), user: str = Depends(get_current_user)):
+    jobs = crud.get_progs_from_user(db, uid=user)
     return jobs
 
 
 @app.post("/programs")
 def create_program(
-    name: str = Form(...), executable: bytes = File(...), db: Session = Depends(get_db)
+    name: str = Form(...), executable: bytes = File(...), db: Session = Depends(get_db), user: str = Depends(get_current_user)
 ):
-    prog = crud.create_program(db, prog_name=name, executable=executable)
+    prog = crud.create_program(db, prog_name=name, executable=executable, uid=user)
     if prog is None:
         result = schemas.ResultError(error="Program not created")
     else:
