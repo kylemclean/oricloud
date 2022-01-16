@@ -100,6 +100,18 @@ def get_run_by_id(run_id: str, db: Session = Depends(get_db)):
     return run
 
 
+@app.put("/runs/{run_id}")
+def complete_run(
+    run_data: schemas.RunOutputData, run_id: str, db: Session = Depends(get_db)
+):
+    run = crud.complete_run(db, out_data=run_data.output, id=run_id)
+    if run is None:
+        result = schemas.ResultError(success=False, error="Run not created")
+    else:
+        result = schemas.ResultPass(success=True, id=run_id)
+    return result
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
