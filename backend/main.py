@@ -44,6 +44,18 @@ def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
     return result
 
 
+@app.post("/programs")
+def create_program(program: schemas.ProgramCreate, db: Session = Depends(get_db)):
+    prog = crud.create_program(
+        db, prog_name=program.name, executable=program.executable
+    )
+    if prog is None:
+        result = schemas.ResultError(success=False, error="Program not created")
+    else:
+        result = schemas.ResultPass(success=True, id=prog.id)
+    return result
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}

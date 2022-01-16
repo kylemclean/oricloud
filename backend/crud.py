@@ -33,3 +33,19 @@ def create_job(db: Session, pid, input):
     db.commit()
     db.refresh(job)
     return job
+
+
+def create_program(db: Session, prog_name, executable):
+    exec_bytes = bytes(executable, "utf-8")
+    # TODO: Get user id that created the job
+    uid = 1
+    program = models.Program(
+        id=uuid.uuid4,
+        name=prog_name,
+        executable=exec_bytes,
+        user_id=uid,
+    )
+    db.add(program)
+    db.commit()
+    db.refresh(program)
+    return program
