@@ -28,8 +28,10 @@ def get_db():
         db.close()
 
 
-@app.get("/jobs/{user_id}", response_model=List[schemas.Job])
-def read_jobs(user_id: str, db: Session = Depends(get_db)):
+@app.get("/jobs", response_model=List[schemas.Job])
+def read_jobs(db: Session = Depends(get_db)):
+    # TODO: Set up authentication stuff to let API know which user ran the GET
+    user_id = "1"
     jobs = crud.get_jobs_from_user(db, uid=user_id)
     return jobs
 
@@ -42,6 +44,12 @@ def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
     else:
         result = schemas.ResultPass(success=True, id=job.id)
     return result
+
+
+@app.get("/jobs/{job_id}", response_model=schemas.Job)
+def get_job_by_id(job_id: str, db: Session = Depends(get_db)):
+    job = crud.get_job(db, id=job_id)
+    return job
 
 
 @app.post("/programs")
