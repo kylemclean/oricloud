@@ -15,10 +15,8 @@ def get_jobs_from_user(db: Session, uid):
     return jobs
 
 
-def create_job(db: Session, pid, input):
+def create_job(db: Session, pid, input, user_id):
     input_msg = bytes(input)
-    # TODO: Get user id that created the job
-    user_id = 1
     job = models.Job(
         id=str(uuid.uuid4()),
         program_id=pid,
@@ -54,10 +52,8 @@ def get_progs_from_user(db: Session, uid: str):
     return progs
 
 
-def create_program(db: Session, prog_name, executable):
+def create_program(db: Session, prog_name, executable, uid):
     exec_bytes = bytes(executable)
-    # TODO: Get user id that created the job
-    uid = 1
     program = models.Program(
         id=str(uuid.uuid4()),
         name=prog_name,
