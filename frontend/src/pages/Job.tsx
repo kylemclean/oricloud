@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, CircularProgress, Container, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, CircularProgress, Container, IconButton, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { Download as DownloadIcon } from '@mui/icons-material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -54,7 +54,14 @@ export default function JobPage(): JSX.Element {
                                             <TableRow key={run.id}>
                                                 <TableCell>{run.id}</TableCell>
                                                 <TableCell>...</TableCell>
-                                                <TableCell><IconButton aria-label="download"><DownloadIcon /></IconButton></TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        component={Link}
+                                                        href={api.runOutputUrl(run.id)}
+                                                        aria-label="download">
+                                                        <DownloadIcon />
+                                                    </IconButton>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
