@@ -5,9 +5,11 @@ import { Run, RunNew, RunCompletion, CompleteRunResult } from './models/run';
 
 class Api {
     private axiosInstance: AxiosInstance;
+    private baseURL?: string;
 
     constructor(config: AxiosRequestConfig) {
         this.axiosInstance = axios.create(config);
+        this.baseURL = config.baseURL;
     }
 
     getJobs = async (): Promise<Job[]> =>
@@ -62,6 +64,9 @@ class Api {
     completeRun = async (runId: string, runCompletion: RunCompletion): Promise<CompleteRunResult> =>
         (await this.axiosInstance.put<RunCompletion, AxiosResponse<CompleteRunResult>>(
             `runs/${runId}`, runCompletion)).data;
+
+    runOutputUrl = (runId: string): string =>
+        `${this.baseURL ?? '/'}/runs/${runId}/output`
 }
 
 const api = new Api({
