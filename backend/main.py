@@ -52,6 +52,14 @@ def get_job_by_id(job_id: str, db: Session = Depends(get_db)):
     return job
 
 
+@app.get("/programs", response_model=List[schemas.Program])
+def read_progs(db: Session = Depends(get_db)):
+    # TODO: Set up authentication stuff to let API know which user ran the GET
+    user_id = "1"
+    jobs = crud.get_progs_from_user(db, uid=user_id)
+    return jobs
+
+
 @app.post("/programs")
 def create_program(program: schemas.ProgramCreate, db: Session = Depends(get_db)):
     prog = crud.create_program(
@@ -62,6 +70,12 @@ def create_program(program: schemas.ProgramCreate, db: Session = Depends(get_db)
     else:
         result = schemas.ResultPass(success=True, id=prog.id)
     return result
+
+
+@app.get("/programs/{prog_id}", response_model=schemas.Program)
+def get_prog_by_id(prog_id: str, db: Session = Depends(get_db)):
+    job = crud.get_prog(db, id=prog_id)
+    return job
 
 
 @app.get("/")

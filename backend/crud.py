@@ -38,6 +38,15 @@ def get_job(db: Session, id):
     return schemas.Job(id=db_job.id, state=str(db_job.state), program=job_program)
 
 
+def get_progs_from_user(db: Session, uid: str):
+    progs = []
+    db_progs = db.query(models.Program).filter(models.Program.user_id == uid).all()
+    for db_prog in db_progs:
+        prog = get_prog(db, db_prog.id)
+        progs.append(prog)
+    return progs
+
+
 def create_program(db: Session, prog_name, executable):
     exec_bytes = bytes(executable, "utf-8")
     # TODO: Get user id that created the job
@@ -52,3 +61,9 @@ def create_program(db: Session, prog_name, executable):
     db.commit()
     db.refresh(program)
     return program
+
+
+def get_prog(db: Session, id):
+    db_prog = db.query(models.Program).filter(models.Program.id == id).first()
+    prog = schemas.Program(id=db_prog.id, name=db_prog.name)
+    return prog
