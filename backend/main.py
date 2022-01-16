@@ -22,10 +22,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8000",
-        "http://localhost:3000",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,7 +47,7 @@ def read_jobs(db: Session = Depends(get_db)):
 
 @app.post("/jobs")
 def create_job(
-    program_id: str = Form(...), input: bytes = File(...), db: Session = Depends(get_db)
+    input: bytes = File(...), program_id: str = Form(...), db: Session = Depends(get_db)
 ):
     job = crud.create_job(db, pid=program_id, input=input)
     if job is None:
@@ -66,6 +63,18 @@ def get_job_by_id(job_id: str, db: Session = Depends(get_db)):
     return job
 
 
+@app.get("/jobs/{job_id}/input")
+def get_job_input_by_id(job_id: str, db: Session = Depends(get_db)):
+    input = crud.get_job_input(db, id=job_id)
+    return Response(
+        content=input,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": f'attachment; filename="job-{job_id}-input.bin"'
+        },
+    )
+
+
 @app.get("/programs", response_model=List[schemas.Program])
 def read_progs(db: Session = Depends(get_db)):
     # TODO: Set up authentication stuff to let API know which user ran the GET
@@ -76,7 +85,7 @@ def read_progs(db: Session = Depends(get_db)):
 
 @app.post("/programs")
 def create_program(
-    name: str = Form(...), executable: bytes = File(...), db: Session = Depends(get_db)
+    executable: bytes = File(...), name: str = Form(...), db: Session = Depends(get_db)
 ):
     prog = crud.create_program(db, prog_name=name, executable=executable)
     if prog is None:
@@ -90,6 +99,16 @@ def create_program(
 def get_prog_by_id(prog_id: str, db: Session = Depends(get_db)):
     job = crud.get_prog(db, id=prog_id)
     return job
+
+
+@app.get("/programs/{prog_id}/executable")
+def get_program_executable_by_id(prog_id: str, db: Session = Depends(get_db)):
+    executable = crud.get_prog_executable(db, id=prog_id)
+    return Response(
+        content=executable,
+        media_type="application/wasm",
+        headers={"Content-Disposition": f'attachment; filename="prog-{prog_id}.wasm"'},
+    )
 
 
 @app.get("/runs", response_model=List[schemas.Run])
