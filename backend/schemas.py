@@ -13,10 +13,6 @@ class Program(ProgramBase):
         orm_mode = True
 
 
-class ProgramData(Program):
-    executable: str
-
-
 class JobBase(BaseModel):
     pass
 
@@ -32,8 +28,7 @@ class Job(JobBase):
 
 class JobData(JobBase):
     id: str
-    input: str
-    program: ProgramData
+    program: Program
 
 
 class RunBase(BaseModel):
