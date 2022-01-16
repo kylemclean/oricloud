@@ -4,7 +4,7 @@ import models, schemas
 import uuid
 
 
-def get_jobs_from_user(db: Session, uid: str):
+def get_jobs_from_user(db: Session, uid):
     jobs = []
     db_jobs = db.query(models.Job).filter(models.Job.creator_id == uid).all()
     for db_job in db_jobs:
@@ -109,3 +109,15 @@ def get_run(db: Session, id):
     db_run = db.query(models.Run).filter(models.Run.id == id).first()
     run = schemas.Run(id=db_run.id, state=str(db_run.state))
     return run
+
+
+def complete_run(db: Session, out_data, id):
+    db.query(models.Run).filter(models.Run.id == id).update(
+        {"state": "Completed"}, synchronize_session="fetch"
+    )
+    output_data = bytes(out_data, "utf-8")
+    run_com = models.RunCompletion(run_id=id, output=output_data)
+    db.add(run_com)
+    db.commit()
+    db.refresh(run_com)
+    return run_com
