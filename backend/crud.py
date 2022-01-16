@@ -14,7 +14,7 @@ def get_jobs_from_user(db: Session, uid):
 
 
 def create_job(db: Session, pid, input):
-    input_msg = bytes(input, "utf-8")
+    input_msg = bytes(input)
     # TODO: Get user id that created the job
     user_id = 1
     job = models.Job(
