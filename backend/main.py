@@ -4,7 +4,7 @@ import uvicorn
 
 from typing import Optional
 
-from fastapi import FastAPI, Depends, File, Form, HTTPException
+from fastapi import FastAPI, Depends, File, Form, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.orm import Session
@@ -114,14 +114,27 @@ def get_run_by_id(run_id: str, db: Session = Depends(get_db)):
     return run
 
 
+@app.get("/runs/{run_id}/output")
+def get_run_output_by_id(run_id: str, db: Session = Depends(get_db)):
+    run_completion = crud.get_run_completion(db, id=run_id)
+    return Response(
+        content=run_completion.output,
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="run-{run_id}.bin"'},
+    )
+
+
 @app.put("/runs/{run_id}")
 def complete_run(
-    run_data: schemas.RunCompletion, run_id: str, db: Session = Depends(get_db)
+    run_id: str,
+    output: bytes = File(...),
+    key: str = Form(...),
+    db: Session = Depends(get_db),
 ):
     # TODO: Check key
-    run = crud.complete_run(db, out_data=run_data.output, id=run_id)
+    run = crud.complete_run(db, out_data=output, id=run_id)
     if run is None:
-        result = schemas.ResultError(error="Run not created")
+        result = schemas.ResultError(error="Run not completed")
     else:
         result = schemas.ResultPass()
     return result

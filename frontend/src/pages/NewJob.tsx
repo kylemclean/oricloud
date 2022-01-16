@@ -10,7 +10,7 @@ import { Program } from '../api/models/program';
 
 interface NewJobForm {
     program_id: string,
-    input: File
+    input: FileList
 }
 
 export default function NewJob(): JSX.Element {
@@ -35,7 +35,7 @@ export default function NewJob(): JSX.Element {
     const { isSubmitting } = useFormState({ control });
 
     const onSubmit: SubmitHandler<NewJobForm> = data => {
-        api.createJob(data)
+        api.createJob({ input: data.input[0], program_id: data.program_id })
             .then(result => {
                 if (result.success) {
                     navigate(`/jobs/${result.id}`);

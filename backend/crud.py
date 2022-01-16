@@ -111,11 +111,18 @@ def get_run(db: Session, id):
     return run
 
 
+def get_run_completion(db: Session, id):
+    run_completion = (
+        db.query(models.RunCompletion).filter(models.RunCompletion.run_id == id).first()
+    )
+    return run_completion
+
+
 def complete_run(db: Session, out_data, id):
     db.query(models.Run).filter(models.Run.id == id).update(
         {"state": "Completed"}, synchronize_session="fetch"
     )
-    output_data = bytes(out_data, "utf-8")
+    output_data = bytes(out_data)
     run_com = models.RunCompletion(run_id=id, output=output_data)
     db.add(run_com)
     db.commit()
