@@ -40,6 +40,7 @@ const Login = () => {
                     render={({ field }) => (
                         <TextField
                             {...field}
+                            type="email"
                             label="Email"
                             variant="outlined"
                             required
@@ -53,6 +54,7 @@ const Login = () => {
                     render={({ field }) => (
                         <TextField
                             {...field}
+                            type="password"
                             label="Password"
                             variant="outlined"
                             required
