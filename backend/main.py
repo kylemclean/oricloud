@@ -121,7 +121,7 @@ def create_program(
     executable: bytes = File(...),
     name: str = Form(...),
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_user)
+    user: str = Depends(get_current_user),
 ):
     prog = crud.create_program(db, prog_name=name, executable=executable, uid=user)
     if prog is None:
@@ -186,15 +186,8 @@ def complete_run(
     key: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    verify_key = (
-        db.query(models.Run)
-        .filter((models.Run.id == id) and (models.Run.key == key))
-        .first()
-    )
     run = crud.complete_run(db, out_data=output, id=run_id)
-    if not verify_key:
-        result = schemas.ResultError(error="Not valid run")
-    elif run is None:
+    if run is None:
         result = schemas.ResultError(error="Run not completed")
     else:
         result = schemas.ResultPass()
