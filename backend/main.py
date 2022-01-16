@@ -109,7 +109,10 @@ def read_progs(db: Session = Depends(get_db), user: str = Depends(get_current_us
 
 @app.post("/programs")
 def create_program(
-    name: str = Form(...), executable: bytes = File(...), db: Session = Depends(get_db), user: str = Depends(get_current_user)
+    name: str = Form(...),
+    executable: bytes = File(...),
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user),
 ):
     prog = crud.create_program(db, prog_name=name, executable=executable, uid=user)
     if prog is None:
