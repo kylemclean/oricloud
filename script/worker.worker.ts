@@ -8,22 +8,21 @@ onmessage = async (e: MessageEvent<{ program: Uint8Array, inputData: Uint8Array 
 
     const exports = instance.exports as {
         memory: WebAssembly.Memory,
-        pog_entry: (inputBuf: number, inputLen: number, outputLenPtr: number) => number
+        pog_entry: (inputBuf: number, inputLen: number, outputLenPtr: number) => number,
     };
 
     const mem = exports.memory.buffer;
-
     const outputLenPtr = new Uint32Array(mem, 0, 1);
     const inputBuf = new Uint8Array(mem, outputLenPtr.byteOffset + outputLenPtr.byteLength, inputData.byteLength);
-    const inputLen = inputBuf.byteLength;
     inputBuf.set(inputData);
 
-    const returnValue = exports.pog_entry(inputBuf.byteOffset, inputLen, outputLenPtr.byteOffset);
+    const returnValue = exports.pog_entry(inputBuf.byteOffset, inputBuf.byteLength, outputLenPtr.byteOffset);
     const outputLen = outputLenPtr[0];
+    console.log('the output length is ' + outputLen);
     const outputBuf = new Uint8Array(mem, returnValue, outputLen);
 
     console.log(`outputBuf ${outputBuf} "${new TextDecoder().decode(outputBuf)}"`)
     console.log('return value', returnValue);
 
-    postMessage(outputBuf);
+    postMessage({ outputBuf, returnValue });
 }
