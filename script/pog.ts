@@ -39,14 +39,16 @@ async function main() {
     const inputDataBuf = await inputDataResponse.arrayBuffer();
 
     const worker = Worker();
-    worker.onmessage = ({ outputBuf, returnValue }: { outputBuf: Uint8Array, returnValue: number }) => {
+    worker.onmessage = ({ data }) => {
+        const { outputBuf } = data;
         const formData = new FormData();
+        console.log(outputBuf)
         formData.append("key", runData.key);
         formData.append("output", new Blob([outputBuf]));
 
         fetch(`${baseUrl}/runs/${runData.id}`, {
             method: 'PUT',
-            body: formData
+            body: formData,
         }).then(uploadResponse => console.log(uploadResponse));
     };
 
