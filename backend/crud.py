@@ -89,11 +89,7 @@ def get_runs_from_job(db: Session, jid: str):
 def create_run(db: Session, id):
     job = (
         db.query(models.Job)
-        .filter(
-            (models.Job.creator_id == id)
-            and (models.Job.state != "Completed")
-            and (models.Job.state != "Cancelled")
-        )
+        .filter((models.Job.creator_id == id) and (models.Job.state == "Pending"))
         .first()
     )
     program_db = (
