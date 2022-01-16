@@ -61,9 +61,10 @@ class RunNew(RunBase):
     job: JobData
 
 
-class RunOutputData(BaseModel):
+class RunCompletion(BaseModel):
+    key: str
     output: str
-    
+
 
 class ResultBase(BaseModel):
     success: bool
@@ -75,4 +76,3 @@ class ResultPass(BaseModel):
 
 class ResultError(BaseModel):
     error: str
-
