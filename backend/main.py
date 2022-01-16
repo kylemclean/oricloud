@@ -8,6 +8,7 @@ from fastapi import FastAPI
 
 import models
 from database import SessionLocal, engine
+import schemas
 
 models.Base.metadata.create_all(bind=engine)
 
