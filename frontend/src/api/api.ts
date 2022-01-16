@@ -16,9 +16,19 @@ class Api {
     getJob = async (jobId: string): Promise<Job> =>
         (await this.axiosInstance.get<Job>(`/jobs/${jobId}`)).data;
 
-    createJob = async (job: JobCreate): Promise<CreateJobResult> =>
-        (await this.axiosInstance.post<JobCreate, AxiosResponse<CreateJobResult>>(
-            '/jobs', job)).data;
+    createJob = async (job: JobCreate): Promise<CreateJobResult> => {
+        const formData = new FormData();
+        for (const [key, value] of Object.entries(job))
+            formData.append(key, value);
+
+        return (await this.axiosInstance.post<FormData, AxiosResponse<CreateJobResult>>(
+            '/jobs',
+            formData,
+            {
+                headers: { "Content-type": "multipart/form-data" }
+            }
+        )).data;
+    }
 
     getPrograms = async (): Promise<Program[]> =>
         (await this.axiosInstance.get<Program[]>('/programs')).data;

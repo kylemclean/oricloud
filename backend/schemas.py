@@ -30,11 +30,6 @@ class Job(JobBase):
         orm_mode = True
 
 
-class JobCreate(JobBase):
-    program_id: str
-    input: str
-
-
 class JobData(JobBase):
     id: str
     input: str

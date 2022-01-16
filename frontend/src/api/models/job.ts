@@ -11,7 +11,7 @@ export type Job = JobBase & {
 
 export type JobCreate = JobBase & {
     program_id: string,
-    input: string
+    input: File
 };
 
 export type JobData = JobBase & {
