@@ -13,7 +13,7 @@ def get_jobs_from_user(db: Session, uid: str):
             .filter(models.Program.id == db_job.program_id)
             .first()
         )
-        job = schemas.Job(id=db_job.id, state=db_job.state, program=job_program)
+        job = schemas.Job(id=db_job.id, state=str(db_job.state), program=job_program)
         jobs.append(job)
     return jobs
 
