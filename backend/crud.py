@@ -8,12 +8,7 @@ def get_jobs_from_user(db: Session, uid: str):
     jobs = []
     db_jobs = db.query(models.Job).filter(models.Job.creator_id == uid).all()
     for db_job in db_jobs:
-        job_program = (
-            db.query(models.Program)
-            .filter(models.Program.id == db_job.program_id)
-            .first()
-        )
-        job = schemas.Job(id=db_job.id, state=str(db_job.state), program=job_program)
+        job = get_job(db, db_job.id)
         jobs.append(job)
     return jobs
 
@@ -33,6 +28,14 @@ def create_job(db: Session, pid, input):
     db.commit()
     db.refresh(job)
     return job
+
+
+def get_job(db: Session, id):
+    db_job = db.query(models.Job).filter(models.Job.id == id).first()
+    job_program = (
+        db.query(models.Program).filter(models.Program.id == db_job.program_id).first()
+    )
+    return schemas.Job(id=db_job.id, state=str(db_job.state), program=job_program)
 
 
 def create_program(db: Session, prog_name, executable):
