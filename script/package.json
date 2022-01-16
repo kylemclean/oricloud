@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild pog.ts --bundle --outfile=out.js && cp out.js test/pog.js",
+    "build": "node build.mjs && cp out.js test/pog.js",
     "start": "npm run build && http-server test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "esbuild": "^0.14.11"
+    "esbuild": "^0.14.11",
+    "esbuild-plugin-inline-worker": "^0.1.1"
   },
   "devDependencies": {
     "http-server": "^14.1.0"
