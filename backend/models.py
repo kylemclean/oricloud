@@ -2,7 +2,7 @@ import enum
 from sqlalchemy import Column, ForeignKey, Integer, String, LargeBinary, Enum
 from sqlalchemy.orm import relationship
 
-from .database import Base
+from database import Base
 
 
 class State(enum.Enum):
@@ -16,12 +16,12 @@ class Job(Base):
 
     id = Column(String, primary_key=True)
     input = Column(LargeBinary)
-    programId = Column(String, ForeignKey("program.id"))
-    creatorId = Column(String, ForeignKey("user.id"))
+    program_id = Column(String, ForeignKey("program.id"))
+    creator_id = Column(String, ForeignKey("user.id"))
     state = Column(Enum(State))
 
     program = relationship("Program")
-    creator = relationship("Creator")
+    creator = relationship("User")
 
 
 class JobResult(Base):
@@ -39,7 +39,7 @@ class Run(Base):
     id = Column(String, primary_key=True)
     state = Column(Enum(State))
     key = Column(String)
-    jobId = Column(String, ForeignKey("job.id"))
+    job_id = Column(String, ForeignKey("job.id"))
 
     job = relationship("Job")
 
@@ -55,9 +55,9 @@ class Program(Base):
     user = relationship("User")
 
 
-class User:
+class User(Base):
     __tablename__ = "user"
 
     id = Column(String, primary_key=True)
-    email = Column(String)
+    email = Column(String, unique=True)
     password = Column(String)
