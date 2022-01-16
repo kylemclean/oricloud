@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 import models, schemas
 import uuid
 
+from main import app
+
 
 def get_jobs_from_user(db: Session, uid):
     jobs = []
@@ -38,6 +40,11 @@ def get_job(db: Session, id):
     return schemas.Job(id=db_job.id, state=str(db_job.state), program=job_program)
 
 
+def get_job_input(db: Session, id: str):
+    db_job = db.query(models.Job).filter(models.Job.id == id).first()
+    return db_job.input
+
+
 def get_progs_from_user(db: Session, uid: str):
     progs = []
     db_progs = db.query(models.Program).filter(models.Program.user_id == uid).all()
@@ -69,6 +76,11 @@ def get_prog(db: Session, id):
     return prog
 
 
+def get_prog_executable(db: Session, id: str):
+    db_prog = db.query(models.Program).filter(models.Program.id == id).first()
+    return db_prog.executable
+
+
 def get_runs_from_job(db: Session, jid: str):
     runs = []
     db_runs = db.query(models.Run).filter(models.Run.job_id == jid).all()
@@ -88,13 +100,11 @@ def create_run(db: Session, id):
         )
         .first()
     )
-    program = (
+    program_db = (
         db.query(models.Program).filter(models.Program.id == job.program_id).first()
     )
-    program_data = schemas.ProgramData(
-        name=program.name, id=program.id, executable=program.executable
-    )
-    job_data = schemas.JobData(id=job.id, input=job.input, program=program_data)
+    program = schemas.Program(name=program_db.name, id=program_db.id)
+    job_data = schemas.JobData(id=job.id, input=job.input, program=program)
     run = models.Run(
         id=str(uuid.uuid4()), state="Pending", key=str(uuid.uuid4()), job_id=job.id
     )
