@@ -1,5 +1,5 @@
 import { Program, ProgramData } from "./program";
-import { Result } from "./result";
+import { CreateResult, Result } from "./result";
 
 interface JobBase { }
 
@@ -20,4 +20,4 @@ export type JobData = JobBase & {
     program: ProgramData
 }
 
-export type CreateJobResult = Result;
+export type CreateJobResult = CreateResult;

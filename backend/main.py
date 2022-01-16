@@ -4,7 +4,8 @@ import uvicorn
 
 from typing import Optional
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, File, Form, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.orm import Session
 
@@ -18,6 +19,17 @@ import crud
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8000",
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency
 def get_db():
@@ -40,9 +52,9 @@ def read_jobs(db: Session = Depends(get_db)):
 def create_job(job: schemas.JobCreate, db: Session = Depends(get_db)):
     job = crud.create_job(db, pid=job.program_id, input=job.input)
     if job is None:
-        result = schemas.ResultError(success=False, error="Job not created")
+        result = schemas.ResultError(error="Job not created")
     else:
-        result = schemas.ResultPass(success=True, id=job.id)
+        result = schemas.CreateResultPass(id=job.id)
     return result
 
 
@@ -61,14 +73,14 @@ def read_progs(db: Session = Depends(get_db)):
 
 
 @app.post("/programs")
-def create_program(program: schemas.ProgramCreate, db: Session = Depends(get_db)):
-    prog = crud.create_program(
-        db, prog_name=program.name, executable=program.executable
-    )
+def create_program(
+    name: str = Form(...), executable: bytes = File(...), db: Session = Depends(get_db)
+):
+    prog = crud.create_program(db, prog_name=name, executable=executable)
     if prog is None:
-        result = schemas.ResultError(success=False, error="Program not created")
+        result = schemas.ResultError(error="Program not created")
     else:
-        result = schemas.ResultPass(success=True, id=prog.id)
+        result = schemas.CreateResultPass(id=prog.id)
     return result
 
 
@@ -88,7 +100,7 @@ def read_runs(job: str, db: Session = Depends(get_db)):
 def run_job(user: str, db: Session = Depends(get_db)):
     new_run = crud.create_run(db, id=user)
     if new_run is None:
-        result = schemas.ResultError(success=False, error="Job not run")
+        result = schemas.ResultError(error="Job not run")
         return result
     else:
         return new_run
@@ -104,12 +116,12 @@ def get_run_by_id(run_id: str, db: Session = Depends(get_db)):
 def complete_run(
     run_data: schemas.RunCompletion, run_id: str, db: Session = Depends(get_db)
 ):
-    # TODO: check key
+    # TODO: Check key
     run = crud.complete_run(db, out_data=run_data.output, id=run_id)
     if run is None:
-        result = schemas.ResultError(success=False, error="Run not created")
+        result = schemas.ResultError(error="Run not created")
     else:
-        result = schemas.ResultPass(success=True, id=run_id)
+        result = schemas.ResultPass()
     return result
 
 
